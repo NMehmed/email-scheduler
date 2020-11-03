@@ -20,5 +20,5 @@ This repo builds up Email scheduler app using docker.
 
 ## Running the app
 
-Simply run `bash init.sh`. It will clone the repos and will run `docker-compose up` to build up containers.
+Simply run `bash init.sh`. It will clone the repos and will run `docker-compose build` and `docker-compose up` to build up containers.
 Once they are up and running just browse to `http://localhost:3000`.
