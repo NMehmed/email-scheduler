@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  email-scheduler-ui:
+    tty: true
+    build:
+      context: ./email-scheduler-ui
+      dockerfile: Dockerfile
+    working_dir: /usr/src/app
+    ports:
+      - "3000:3000"
+    expose:
+      - 3000
+    environment:
+      - REACT_APP_API_SERVER_URL=http://localhost:8080
+    command:
+      bash -c "sleep 15s && npm start"
+
+  email-scheduler-be:
+    build:
+      context: ./email-scheduler-be
+      dockerfile: Dockerfile
+    working_dir: /usr/src/app
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    networks:
+      - app
+    links:
+      - rabbitmq
+      - mongo
+    environment:
+      - MESSAGE_QUEUE=amqp://rabbitmq
+      - QUEUE_NAME=tasks
+      - MONGODB_URL=mongodb://mongo/
+    command:
+      bash -c "sleep 10s && npm start"
+
+  email-sender:
+    build:
+      context: ./email-sender
+      dockerfile: Dockerfile
+    working_dir: /usr/src/app
+    deploy:
+      replicas: 2
+    networks:
+      - app
+    links:
+      - rabbitmq
+    env_file: .env
+    environment:
+      - MESSAGE_QUEUE=amqp://rabbitmq
+      - QUEUE_NAME=tasks
+      - MAIL_GUN_DOMAIN=${MAIL_GUN_DOMAIN}
+      - MAIL_GUN_API_KEY=${MAIL_GUN_API_KEY}
+      - MAIL_FROM=${MAIL_FROM}
+    command:
+      bash -c "sleep 10s && npm start"
+
+  mongo:
+    image: mongo
+    ports:
+      - "27018:27018"
+    expose:
+      - 27018
+    networks:
+      - app
+
+  rabbitmq:
+    image: rabbitmq:3.8.9
+    ports:
+      - "5673:5673"
+    expose:
+      - 5673
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
