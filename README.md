@@ -4,7 +4,7 @@ This repo builds up Email scheduler app using docker.
 
 - https://github.com/NMehmed/email-scheduler-ui (React UI App)
 - https://github.com/NMehmed/email-scheduler-be (Fastify REST API server)
-- https://github.com/NMehmed/email-sender (Simple Node js app which sends mails)
+- https://github.com/NMehmed/email-sender (Simple Node js app which sends mails using Mailgun)
 - RabbitMQ used for communication between nodejs apps
 - MongoDB used for data storing
 
@@ -15,7 +15,7 @@ This repo builds up Email scheduler app using docker.
 
 ## Env variable setup
 
-- Rename .env-example to .env
+- Make a copy of `.env-example` and rename it to `.env`
 - Put your mail gun details there
 
 ## Running the app
